@@ -135,3 +135,29 @@ class DLangParser(Parser):
         print("Found VariableDecl")
         return p.Variable
     
+    # Variable -> Type ident
+    @_('Type ID')
+    def Variable(self, p):
+        # p.Type is the variable's type
+        # p.ID is the variable's name from the lexer
+        return (p.Type, p.ID)
+    
+    # Type -> int
+    @_('INT')
+    def Type(self, p):
+        return p.INT
+    
+    # Type -> double
+    @_('DOUBLE')
+    def Type(self, p):
+        return p.DOUBLE
+    
+    # Type -> bool
+    @_('BOOL')
+    def Type(self, p):
+        return p.BOOL
+    
+    # Type -> string
+    @_('STRING')
+    def Type(self, p):
+        return p.STRING
