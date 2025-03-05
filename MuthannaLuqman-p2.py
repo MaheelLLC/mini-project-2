@@ -207,3 +207,22 @@ class DLangParser(Parser):
     @_('')
     def StmtList(self, p):
         return []
+    
+if __name__ == '__main__':
+    # store the test file name
+    filename = 'test-parser.dlang'
+    
+    # open and read the file 
+    # with statement automatically closes the file
+    with open(filename, 'r') as file:
+        data = file.read()
+        
+    # create a lexer and parser
+    lexer = DLangLexer()
+    parser = DLangParser()
+    
+    # parse the file after tokenizing the contents
+    result = parser.parse(lexer.tokenize(data))
+    
+    # show the result
+    print(result)
