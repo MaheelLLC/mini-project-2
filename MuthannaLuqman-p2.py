@@ -194,6 +194,7 @@ class DLangParser(Parser):
     def Formals(self, p):
         return []
     
+    # StmtBlock -> { VariableDecl* Stmt* }
     @_('LCURLYB VariableDeclList StmtList RCURLYB')
     def StmtBlock(self, p):
         return (p.LCURLYB, p.VariableDeclList , p.StmtList , p.RCURLYB)
@@ -219,6 +220,73 @@ class DLangParser(Parser):
     @_('')
     def StmtList(self, p):
         return []
+    
+    # Stmt -> <Expr> ;
+    @_('OptionalExpr SEMICOLON')
+    def Stmt(self, p):
+        return (p.OptionalExpr, p.SEMICOLON)
+    
+    # <Expr> -> Expr (optional Expr can return 1 Expr)
+    @_('Expr')
+    def OptionalExpr(self, p):
+        return p.Expr
+    
+    # <Expr> -> empty (optional Expr can also return 0 Expr)
+    @_('')
+    def OptionalExpr(self, p):
+        return []
+    
+    # Stmt -> IfStmt
+    @_('IfStmt')
+    def Stmt(self, p):
+        return p.IfStmt
+    
+    # Stmt -> WhileStmt
+    @_('WhileStmt')
+    def Stmt(self, p):
+        return p.WhileStmt
+    
+    # Stmt -> ForStmt
+    @_('ForStmt')
+    def Stmt(self, p):
+        return p.ForStmt
+    
+    # Stmt -> BreakStmt
+    @_('BreakStmt')
+    def Stmt(self, p):
+        return p.BreakStmt
+    
+    # Stmt -> ReturnStmt
+    @_('ReturnStmt')
+    def Stmt(self, p):
+        return p.ReturnStmt
+    
+    # Stmt -> OutputStmt
+    @_('OutputStmt')
+    def Stmt(self, p):
+        return p.OutputStmt
+    
+    # Stmt -> StmtBlock
+    @_('StmtBlock')
+    def Stmt(self, p):
+        return p.StmtBlock
+    
+    # IfStmt -> if ( Expr ) Stmt <else Stmt>
+    @_('IF LPAREN Expr RPAREN Stmt OptionalElseStmt')
+    def IfStmt(self, p):
+        return (p.IF, p.LPAREN, p.Expr, p.RPAREN, p.Stmt, p.OptionalElseStmt)
+    
+    # <else Stmt> -> else Stmt (optional else Stmt can return 1 else Stmt)
+    @_('ELSE Stmt')
+    def OptionalElseStmt(self, p):
+        return (p.ELSE, p.Stmt)
+    
+    # <else Stmt> -> empty (optional else Stmt can return 0 else Stmt)
+    @_('')
+    def OptionalElseStmt(self, p):
+        return []
+    
+    
     
     # Call -> ident (Actuals)
     @_('ID LPAREN Actuals RPAREN')
