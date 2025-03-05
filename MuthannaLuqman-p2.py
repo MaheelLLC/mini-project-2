@@ -118,4 +118,18 @@ class DLangParser(Parser):
         # Decl+ can now either return Decl or [Decl, Decl, ...]
         return [p.Decl]
     
+    @_('VariableDecl')
+    def Decl(self, p):
+        # Decl produces a VariableDecl
+        return p.VariableDecl
     
+    @_('FunctionDecl')
+    def Decl(self, p):
+        # Decl also produces a FunctionDecl
+        return p.FunctionDecl
+    
+    # VariableDecl -> Variable;
+    # ; is a SEMICOLON in the lexical analyzer
+    @_('Variable SEMICOLON')
+    def VariableDecl(self, p):
+        return p.Variable
