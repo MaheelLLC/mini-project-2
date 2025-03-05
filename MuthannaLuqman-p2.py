@@ -161,3 +161,23 @@ class DLangParser(Parser):
     @_('STRING')
     def Type(self, p):
         return p.STRING
+    
+    #Type ident ( Formals ) StmtBlock 
+    @_('Type ID LPAREN Formals RPAREN StmtBlock')
+    def FunctionDecl(self, p):
+        return (p.Type, p.ID,p.LPAREN, p.RPAREN, p.Formals, p.StmtBlock)
+    
+    # nothing ident ( Formals ) StmtBlock
+    @_('NOTHING ID LPAREN Formals RPAREN StmtBlock')
+    def FunctionDecl(self, p):
+        return (p.Nothing, p.ID,p.LPAREN, p.RPAREN, p.Formals, p.StmtBlock)
+    
+    # Variable+,
+    @_('Variable PLUS COMMA')
+    def Formals(self, p):
+        return [p.Variable] + p.Formals
+    
+    # returns an emply list if there are no formals
+    @_('')
+    def Formals(self, p):
+        return []
