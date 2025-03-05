@@ -105,4 +105,17 @@ class DLangParser(Parser):
         # the return value is the same as the decorator
         return p.DeclPlus
     
+    # define what Decl+ means
+    @_('DeclPlus Decl')
+    def DeclPlus(self, p):
+        # recursion allows for infinite Decl's
+        # adding two objects together is easier in an array
+        return p.DeclPlus + [p.Decl]
+    
+    # the base case of the recursion above
+    @_('Decl')
+    def DeclPlus(self, p):
+        # Decl+ can now either return Decl or [Decl, Decl, ...]
+        return [p.Decl]
+    
     
