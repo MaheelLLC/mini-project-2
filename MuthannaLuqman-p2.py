@@ -162,20 +162,32 @@ class DLangParser(Parser):
     def Type(self, p):
         return p.STRING
     
-    #Type ident ( Formals ) StmtBlock 
+    # Type ident ( Formals ) StmtBlock 
     @_('Type ID LPAREN Formals RPAREN StmtBlock')
     def FunctionDecl(self, p):
-        return (p.Type, p.ID,p.LPAREN, p.RPAREN, p.Formals, p.StmtBlock)
+        return (p.Type, p.ID, p.LPAREN, p.Formals, p.RPAREN, p.StmtBlock)
     
     # nothing ident ( Formals ) StmtBlock
     @_('NOTHING ID LPAREN Formals RPAREN StmtBlock')
     def FunctionDecl(self, p):
-        return (p.Nothing, p.ID,p.LPAREN, p.RPAREN, p.Formals, p.StmtBlock)
+        return (p.NOTHING, p.ID, p.LPAREN, p.Formals, p.RPAREN, p.StmtBlock)
     
-    # Variable+,
-    @_('Variable PLUS COMMA')
+    # Formals -> Variable+,
+    @_('VariablePlus COMMA')
     def Formals(self, p):
-        return (p.Variable, p.PLUS, p.COMMA) 
+        return (p.VariablePlus, p.COMMA)
+    
+    # Variable+
+    @_('VariablePlus Variable')
+    def VariablePlus(self, p):
+        # recursively collect all variable declarations into a list
+        return p.VariablePlus + [p.Variable]
+    
+    # the base of recursion above
+    @_('Variable')
+    def VariablePlus(self, p):
+        # Variable+ can now either be Variable or [Variable, Variable, ...]
+        return p.Variable
     
     # returns an emply list if there are no formals
     @_('')
@@ -207,6 +219,61 @@ class DLangParser(Parser):
     @_('')
     def StmtList(self, p):
         return []
+    
+    # Call -> ident (Actuals)
+    @_('ID LPAREN Actuals RPAREN')
+    def Call(self, p):
+        return (p.ID, p.LPAREN, p.Actuals, p.RPAREN)
+
+    # Actuals -> Expr+, 
+    @_('ExprPlus COMMA')
+    def Actuals(self, p):
+        return (p.ExprPlus, p.COMMA)
+
+    # Expr+
+    @_('ExprPlus Expr')
+    def ExprPlus(self, p):
+        # to represent any number of Expr, we use recursion
+        return p.ExprPlus + [p.Expr]
+
+    # the base case for Expr+ (a single Expr)
+    @_('Expr')
+    def ExprPlus(self, p):
+        # Expr+ can now either be Expr or [Expr, Expr, ...]
+        return [p.Expr]
+
+    # Actuals -> empty
+    @_('empty')
+    def Actuals(self, p):
+        return []
+
+    # Constant -> intConstant
+    @_('INT Constant')
+    def Constant(self, p):
+        return (p.INT, p.Constant)
+
+    # Constant -> doubleConstant
+    @_('DOUBLE Constant')
+    def Constant(self, p):
+        return (p.DOUBLE, p.Constant)
+
+    # Constant -> boolConstant
+    @_('BOOL Constant')
+    def Constant(self, p):
+        return (p.BOOL, p.Constant)
+
+    # Constant -> stringConstant
+    @_('STRING Constant')
+    def Constant(self, p):
+        return (p.STRING, p.Constant)
+
+    # Constant -> null
+    @_('NULL')
+    def Constant(self, p):
+        return p.NULL
+
+
+
     
 if __name__ == '__main__':
     # store the test file name
