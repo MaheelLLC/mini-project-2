@@ -175,9 +175,35 @@ class DLangParser(Parser):
     # Variable+,
     @_('Variable PLUS COMMA')
     def Formals(self, p):
-        return [p.Variable] + p.Formals
+        return (p.Variable, p.PLUS, p.COMMA) 
     
     # returns an emply list if there are no formals
     @_('')
     def Formals(self, p):
+        return []
+    
+    @_('LCURLYB VariableDeclList StmtList RCURLYB')
+    def StmtBlock(self, p):
+        return (p.LCURLYB, p.VariableDeclList , p.StmtList , p.RCURLYB)
+
+    # VariableDecl*
+    # Recursively collects variable declarations into a list.
+    @_('VariableDeclList VariableDecl')
+    def VariableDeclList(self, p):
+        return p.VariableDeclList + [p.VariableDecl]
+    
+    # if empty return an empty list
+    @_('')
+    def VariableDeclList(self, p):
+        return []
+    
+    # Stmt*
+    # Recursively collects statements into a list.
+    @_('StmtList Stmt')
+    def StmtList(self, p):
+        return p.StmtList + [p.Stmt]
+    
+    # if empty, return an empty list
+    @_('')
+    def StmtList(self, p):
         return []
