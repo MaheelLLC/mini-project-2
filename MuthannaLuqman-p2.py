@@ -109,7 +109,7 @@ class DLangParser(Parser):
     @_('DeclPlus Decl')
     def DeclPlus(self, p):
         # recursion allows for infinite Decl's
-        # adding two objects together is easier in an array
+        # adding two objects together is easier as an array
         return p.DeclPlus + [p.Decl]
     
     # the base case of the recursion above
@@ -132,4 +132,6 @@ class DLangParser(Parser):
     # ; is a SEMICOLON in the lexical analyzer
     @_('Variable SEMICOLON')
     def VariableDecl(self, p):
+        print("Found VariableDecl")
         return p.Variable
+    
