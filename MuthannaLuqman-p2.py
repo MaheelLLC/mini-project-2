@@ -87,4 +87,20 @@ class DLangLexer(Lexer):
         self.index += 1
 
 class DLangParser(Parser):
+    # grab the tokens from DLangLexer
+    tokens = DLangLexer.tokens
     
+    # initialize it with a symbol table
+    def __init__(self):
+        # the symbol table can store variables like NAME in the example
+        self.symbol_table = {}
+    
+    # the decorator is the right hand side of the grammar rule
+    # the function name is the left hand side of the grammar rule
+    # the first grammar rule (the start symbol)
+    @_('DeclPlus')
+    def Program(self, p):
+        # if we reach this function, we have a valid program
+        print("Parsing completed successfully!")
+        # the return value is the same as the decorator
+        return p.DeclPlus
