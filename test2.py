@@ -39,7 +39,7 @@ class DLangLexer(Lexer):
     ID['nothing'] = NOTHING
     ID['double'] = DOUBLE
     ID['bool'] = BOOL
-    ID['string'] = STRING
+    ID['string'] = STRING # keyword STRING actually means string
     ID['class'] = CLASS
     ID['interface'] = INTERFACE
     ID['null'] = NULL
@@ -57,6 +57,7 @@ class DLangLexer(Lexer):
     ID['True'] = TRUE
     ID['False'] = FALSE
 
+    # creates the regex for a literal string (ex. " string ")
     @_(r'"([^"\n]|\\.)*"')
     def STRINGCONST(self, t):
         return t
