@@ -167,11 +167,13 @@ class DLangParser(Parser):
         # Decl+ can now either return Decl or [Decl, Decl, ...]
         return [p.Decl]
     
+    # Decl -> VariableDecl
     @_('VariableDecl')
     def Decl(self, p):
         # Decl produces a VariableDecl
         return p.VariableDecl
     
+    # Decl -> FunctionDecl
     @_('FunctionDecl')
     def Decl(self, p):
         # Decl also produces a FunctionDecl
